@@ -26,6 +26,19 @@ class DmxUsbProInfo {
       'DmxUsbProInfo {Firmware=$firmwareVersionMsb.$firmwareVersionLsb, breakTime=$breakTime, mabTime=$mabTime, refreshRate=$refreshRate}';
 }
 
+/// Enttec Pro definitions
+abstract class EnttecProLabels {
+  static const GET_WIDGET_PARAMS = 3;
+  static const GET_WIDGET_PARAMS_REPLY = 3;
+  static const SET_WIDGET_PARAMS = 4;
+  static const SET_DMX_RX_MODE = 5;
+  static const SET_DMX_TX_MODE = 6;
+  static const SEND_DMX_RDM_TX = 7;
+  static const RECEIVE_DMX_ON_CHANGE = 8;
+  static const RECEIVED_DMX_COS_TYPE = 9;
+  static const GET_WIDGET_SN = 10;
+}
+
 class DmxUsbPro {
   final int _handle;
   DmxUsbPro._(this._handle);
@@ -69,13 +82,12 @@ class DmxUsbPro {
       _cs(_setTimeouts(_handle, readTimeout, writeTimeout), 'SetTimeouts');
 
   DmxUsbProInfo? get info {
-    const GET_WIDGET_PARAMS = 3;
-    if (!write(GET_WIDGET_PARAMS, Uint8List.fromList([0, 0]))) {
+    if (!write(EnttecProLabels.GET_WIDGET_PARAMS, Uint8List.fromList([0, 0]))) {
       purge(TX);
       return null;
     }
-    const GET_WIDGET_PARAMS_REPLY = 3;
-    return read<DmxUsbProInfo?>(GET_WIDGET_PARAMS_REPLY, 5, (data, length) {
+    return read<DmxUsbProInfo?>(EnttecProLabels.GET_WIDGET_PARAMS_REPLY, 5,
+        (data, length) {
       return DmxUsbProInfo._(data[0], data[1], data[2], data[3], data[4]);
     }, null);
   }
