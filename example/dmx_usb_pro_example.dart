@@ -17,6 +17,6 @@ void main() {
     buf[2] = i;
     buf[3] = i;
     print('Light $i');
-    dmxUsbPro.write(6, buf);
+    dmxUsbPro.write(EnttecProLabels.SET_DMX_TX_MODE, buf);
   }
 }
