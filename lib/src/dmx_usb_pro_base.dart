@@ -9,6 +9,8 @@ class DmxUsbProVersionInfo {
   final int minor;
   final int build;
   const DmxUsbProVersionInfo._(this.major, this.minor, this.build);
+  @override
+  String toString() => 'DmxUsbProVersionInfo {$major, $minor, $build}';
 }
 
 class DmxUsbProInfo {
@@ -19,6 +21,9 @@ class DmxUsbProInfo {
   final int refreshRate;
   const DmxUsbProInfo._(this.firmwareVersionLsb, this.firmwareVersionMsb,
       this.breakTime, this.mabTime, this.refreshRate);
+  @override
+  String toString() =>
+      'DmxUsbProInfo {Firmware=$firmwareVersionMsb.$firmwareVersionLsb, breakTime=$breakTime, mabTime=$mabTime, refreshRate=$refreshRate}';
 }
 
 class DmxUsbPro {
@@ -89,7 +94,7 @@ class DmxUsbPro {
         const DMX_START_CODE = 0x7e;
         const DMX_END_CODE = 0xe7;
 
-        final buf = arena.allocate<Uint8>(min(DMX_HEADER_LENGTH, data.length));
+        final buf = arena.allocate<Uint8>(max(DMX_HEADER_LENGTH, data.length));
         final pu32 = arena.allocate<Uint32>(sizeOf<Uint32>());
         // Form Packet Header
         buf[0] = DMX_START_CODE;
@@ -99,6 +104,7 @@ class DmxUsbPro {
         // Write The Header
         if (_write(_handle, buf, DMX_HEADER_LENGTH, pu32) != _OK ||
             pu32.value != DMX_HEADER_LENGTH) {
+          print('1');
           return false;
         }
         // Write The Data
@@ -107,13 +113,17 @@ class DmxUsbPro {
         }
         if (_write(_handle, buf, data.length, pu32) != _OK ||
             pu32.value != data.length) {
+          print('2');
           return false;
         }
         // Write End Code
         buf[0] = DMX_END_CODE;
         if (_write(_handle, buf, 1, pu32) != _OK || pu32.value != 1) {
+          print('3');
+
           return false;
         }
+        print('OK');
         return true;
       });
 
@@ -198,7 +208,7 @@ class DmxUsbPro {
               Uint32 Function(
                 IntPtr,
                 Pointer<Uint32>,
-              )>>('GetDriverVersion')
+              )>>('FT_GetDriverVersion')
       .asFunction();
 
   static final _GetLatencyTimerFunc _getLatencyTimer = dll
@@ -207,7 +217,7 @@ class DmxUsbPro {
               Uint32 Function(
                 IntPtr,
                 Pointer<Uint8>,
-              )>>('GetLatencyTimer')
+              )>>('FT_GetLatencyTimer')
       .asFunction();
 
   static const _LIST_NUMBER_ONLY = 0x80000000;
@@ -219,7 +229,7 @@ class DmxUsbPro {
                 Pointer<Uint32>,
                 IntPtr,
                 Uint32,
-              )>>('ListDevices')
+              )>>('FT_ListDevices')
       .asFunction();
 
   static final _OpenFunc _open = dll
@@ -228,7 +238,7 @@ class DmxUsbPro {
               Uint32 Function(
                 Int32,
                 Pointer<IntPtr>,
-              )>>('Open')
+              )>>('FT_Open')
       .asFunction();
 
   static final _CloseFunc _close = dll
@@ -242,7 +252,7 @@ class DmxUsbPro {
           NativeFunction<
               Uint32 Function(
                   IntPtr, Pointer<Uint8>, Uint32, Pointer<Uint32>)>>(
-        'Read',
+        'FT_Read',
       )
       .asFunction();
 
@@ -251,19 +261,19 @@ class DmxUsbPro {
           NativeFunction<
               Uint32 Function(
                   IntPtr, Pointer<Uint8>, Uint32, Pointer<Uint32>)>>(
-        'Write',
+        'FT_Write',
       )
       .asFunction();
 
   static final _PurgeFunc _purge = dll
       .lookup<NativeFunction<Uint32 Function(IntPtr, Uint32)>>(
-        'Purge',
+        'FT_Purge',
       )
       .asFunction();
 
   static final _SetTimeoutsFunc _setTimeouts = dll
       .lookup<NativeFunction<Uint32 Function(IntPtr, Uint32, Uint32)>>(
-        'SetTimeouts',
+        'FT_SetTimeouts',
       )
       .asFunction();
 }
