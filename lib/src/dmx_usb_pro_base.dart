@@ -255,7 +255,7 @@ class DmxUsbPro {
 
   static final _CloseFunc _close = dll
       .lookup<NativeFunction<Uint32 Function(IntPtr)>>(
-        'Close',
+        'FT_Close',
       )
       .asFunction();
 
