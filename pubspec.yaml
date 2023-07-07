@@ -1,15 +1,13 @@
 name: dmx_usb_pro
-description: A starting point for Dart libraries or applications.
+description: A Dart driver package for ENTTEC DMX USB PRO running on Windows
 version: 1.0.0
-# repository: https://github.com/my_org/my_repo
+repository: https://github.com/espresso3389/dmx_usb_pro
 
 environment:
-  sdk: ^3.0.0-399.0.dev
+  sdk: ^3.0.0
 
-# Add regular dependencies here.
 dependencies:
-  # path: ^1.8.0
-  ffi:
+  ffi: ^2.0.2
 
 dev_dependencies:
   lints: ^2.0.0
