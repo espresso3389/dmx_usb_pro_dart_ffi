@@ -1,3 +1,4 @@
+// The implementation is based on ftd2xx.h
 import 'dart:ffi';
 import 'dart:math';
 import 'dart:typed_data';
@@ -116,7 +117,6 @@ class DmxUsbPro {
         // Write The Header
         if (_write(_handle, buf, DMX_HEADER_LENGTH, pu32) != _OK ||
             pu32.value != DMX_HEADER_LENGTH) {
-          print('1');
           return false;
         }
         // Write The Data
@@ -125,17 +125,13 @@ class DmxUsbPro {
         }
         if (_write(_handle, buf, data.length, pu32) != _OK ||
             pu32.value != data.length) {
-          print('2');
           return false;
         }
         // Write End Code
         buf[0] = DMX_END_CODE;
         if (_write(_handle, buf, 1, pu32) != _OK || pu32.value != 1) {
-          print('3');
-
           return false;
         }
-        print('OK');
         return true;
       });
 
@@ -214,6 +210,11 @@ class DmxUsbPro {
 
   static const _OK = 0;
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_GetDriverVersion(
+  /// 	FT_HANDLE ftHandle,
+  /// 	LPDWORD lpdwVersion
+  /// 	);
   static final _GetDriverVersionFunc _getDriverVersion = dll
       .lookup<
           NativeFunction<
@@ -223,6 +224,11 @@ class DmxUsbPro {
               )>>('FT_GetDriverVersion')
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_GetLatencyTimer(
+  /// 	FT_HANDLE ftHandle,
+  /// 	PUCHAR pucLatency
+  /// 	);
   static final _GetLatencyTimerFunc _getLatencyTimer = dll
       .lookup<
           NativeFunction<
@@ -234,6 +240,12 @@ class DmxUsbPro {
 
   static const _LIST_NUMBER_ONLY = 0x80000000;
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_ListDevices(
+  /// 	PVOID pArg1,
+  /// 	PVOID pArg2,
+  /// 	DWORD Flags
+  /// 	);
   static final _ListDevicesFunc _listDevices = dll
       .lookup<
           NativeFunction<
@@ -244,6 +256,11 @@ class DmxUsbPro {
               )>>('FT_ListDevices')
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_Open(
+  /// 	int deviceNumber,
+  /// 	FT_HANDLE *pHandle
+  /// 	);
   static final _OpenFunc _open = dll
       .lookup<
           NativeFunction<
@@ -253,12 +270,23 @@ class DmxUsbPro {
               )>>('FT_Open')
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_Close(
+  /// 	FT_HANDLE ftHandle
+  /// 	);
   static final _CloseFunc _close = dll
       .lookup<NativeFunction<Uint32 Function(IntPtr)>>(
         'FT_Close',
       )
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_Read(
+  /// 	FT_HANDLE ftHandle,
+  /// 	LPVOID lpBuffer,
+  /// 	DWORD dwBytesToRead,
+  /// 	LPDWORD lpBytesReturned
+  /// 	);
   static final _ReadWriteFunc _read = dll
       .lookup<
           NativeFunction<
@@ -268,6 +296,13 @@ class DmxUsbPro {
       )
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_Write(
+  /// 	FT_HANDLE ftHandle,
+  /// 	LPVOID lpBuffer,
+  /// 	DWORD dwBytesToWrite,
+  /// 	LPDWORD lpBytesWritten
+  /// 	);
   static final _ReadWriteFunc _write = dll
       .lookup<
           NativeFunction<
@@ -277,12 +312,23 @@ class DmxUsbPro {
       )
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_Purge(
+  /// 	FT_HANDLE ftHandle,
+  /// 	ULONG Mask
+  /// 	);
   static final _PurgeFunc _purge = dll
       .lookup<NativeFunction<Uint32 Function(IntPtr, Uint32)>>(
         'FT_Purge',
       )
       .asFunction();
 
+  /// FTD2XX_API
+  /// 	FT_STATUS WINAPI FT_SetTimeouts(
+  /// 	FT_HANDLE ftHandle,
+  /// 	ULONG ReadTimeout,
+  /// 	ULONG WriteTimeout
+  /// 	);
   static final _SetTimeoutsFunc _setTimeouts = dll
       .lookup<NativeFunction<Uint32 Function(IntPtr, Uint32, Uint32)>>(
         'FT_SetTimeouts',

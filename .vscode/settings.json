@@ -1,6 +1,10 @@
 {
     "cSpell.words": [
+        "DWORD",
         "eeprom",
-        "Enttec"
+        "Enttec",
+        "LPDWORD",
+        "LPVOID",
+        "ULONG"
     ]
 }
